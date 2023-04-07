@@ -1,6 +1,15 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.9)
 
-project(English_repeater VERSION 0.1 LANGUAGES CXX)
+set (PROJECT_NAME English_repeater)
+set(INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include)
+set(SOURCE_PATH ${CMAKE_SOURCE_DIR}/src)
+set(CMAKE_AUTOUIC_SEARCH_PATHS ${SOURCE_PATH}/UI)
+
+include(CMakePrintHelpers)
+
+cmake_print_variables(CMAKE_AUTOUIC_SEARCH_PATHS)
+
+project(${PROJECT_NAME} VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -12,50 +21,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
+
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+
+
+        ${SOURCE_PATH}/main.cpp
+        ${SOURCE_PATH}/GUI/mainwindow.cpp
+        ${SOURCE_PATH}/GUI/dataform.cpp
+        ${SOURCE_PATH}/GUI/dialogform.cpp
+        ${SOURCE_PATH}/GUI/repeatform.cpp
+
+        ${SOURCE_PATH}/UI/mainwindow.ui
+        ${SOURCE_PATH}/UI/dialogform.ui
+        ${SOURCE_PATH}/UI/dataform.ui
+        ${SOURCE_PATH}/UI/repeatform.ui
+
+        ${INCLUDE_PATH}/GUI/mainwindow.h
+        ${INCLUDE_PATH}/GUI/dataform.h
+        ${INCLUDE_PATH}/GUI/dialogform.h
+        ${INCLUDE_PATH}/GUI/repeatform.h
+
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(English_repeater
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET English_repeater APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(English_repeater SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(English_repeater
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
+add_subdirectory(src)
 
-target_link_libraries(English_repeater PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-
-set_target_properties(English_repeater PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
-
-install(TARGETS English_repeater
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(English_repeater)
-endif()
